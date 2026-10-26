@@ -2,17 +2,19 @@
 
 ## Project Overview
 
-This project blinks the on-board green user LED (**LD2**) of the **STM32 NUCLEO-F446RE** board using **Keil MDK (µVision)** with **Arm Compiler 6**.
+This project blinks the on-board green user LED (**LD2**) of the **STM32 NUCLEO-F446RE** board using the STM32 HAL library, built with **Keil MDK (µVision)** and **Arm Compiler 6**.
 
 The microcontroller also sends status messages over UART to the PC, and these are read in a **PowerShell** window through the ST-LINK Virtual COM Port.
 
-This was my first project in Keil MDK, and it confirmed that the build, flash and serial communication setup works.
+The project was configured with **STM32CubeMX** and generated for the **MDK-ARM** toolchain. This was my first project in Keil MDK, and it confirmed that the build, flash and serial communication setup works.
 
 ## Key Features
 
 - STM32 NUCLEO-F446RE board
 - On-board LED (LD2) control
+- Pin and peripheral configuration using STM32CubeMX
 - Keil MDK (µVision) with Arm Compiler 6
+- STM32 HAL library
 - Toggle-based LED blinking
 - UART serial output to the PC
 - Serial data read in PowerShell, no extra terminal software needed
@@ -47,15 +49,31 @@ On-board LED (LD2)   ST-LINK Virtual COM Port
 | UART TX to PC | PA2 | USART2_TX |
 | UART RX from PC | PA3 | USART2_RX |
 
+## STM32CubeMX Configuration
+
+1. Create a new project and select the **NUCLEO-F446RE** board in the Board Selector.
+2. Initialize all peripherals with their default mode.
+3. Check that **PA5** is set as `GPIO_Output` and labeled `LD2`.
+4. Enable **USART2** in Asynchronous mode (PA2 as TX, PA3 as RX) with a baud rate of **115200**.
+5. In Project Manager, set the toolchain / IDE to **MDK-ARM**.
+6. Click **Generate Code**.
+
+### Pinout & Configuration
+
+![STM32CubeMX Pinout and Configuration](PIN_OUT.jpeg)
+
+### Project Manager
+
+![STM32CubeMX Project Manager](Project_manager.jpeg)
+
 ## Keil Project Setup
 
-1. Open **Keil µVision** and create a new project in `C:\keil_ws\LD2`.
-2. Select the device **STM32F446RETx**.
-3. Add the required software components (CMSIS Core, Device Startup, and the HAL GPIO/UART drivers if used).
-4. Select **Arm Compiler 6** in `Options for Target → Target`.
-5. In `Options for Target → Debug`, select **ST-Link Debugger**.
-6. In `Options for Target → Debug → Settings → Flash Download`, enable **Reset and Run**.
-7. Add `main.c` and build the project.
+1. Open the generated `.uvprojx` file from the `MDK-ARM` folder in **Keil µVision** (the project is in `C:\keil_ws\LD2`).
+2. Check that the device is **STM32F446RETx**.
+3. Select **Arm Compiler 6** in `Options for Target → Target`.
+4. In `Options for Target → Debug`, select **ST-Link Debugger**.
+5. In `Options for Target → Debug → Settings → Flash Download`, enable **Reset and Run**.
+6. Add your code to `main.c` and build the project.
 
 ## Code
 
@@ -125,6 +143,10 @@ The green LED (LD2) on the board blinks continuously, and the PowerShell window 
 
 Both **CN2** jumper caps on the board must be fitted. If they are missing, the programmer cannot connect to the chip.
 
+### Code Placement
+
+Write your own code only between the `USER CODE BEGIN` and `USER CODE END` comments. Anything outside them is erased when the code is regenerated in CubeMX.
+
 ### COM Port
 
 The COM port number can change between PCs or USB ports. Always check Device Manager before running the PowerShell command.
@@ -140,8 +162,10 @@ Use a data-capable USB cable. Some cables only charge.
 ## Technologies and Concepts
 
 - STM32 NUCLEO-F446RE
+- STM32CubeMX
 - Keil MDK (µVision)
 - Arm Compiler 6
+- STM32 HAL library
 - GPIO output
 - UART communication
 - ST-LINK Virtual COM Port
